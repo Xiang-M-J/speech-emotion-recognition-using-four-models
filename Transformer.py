@@ -249,7 +249,7 @@ class TransformerNet(nn.Module):
         self.d_model1 = 64
         self.d_model2 = 512
         self.n_head = 8
-        self.dim_feedforward = 1024
+        self.dim_feedforward = 512
         self.n_layers = 3
         self.conv1 = nn.Sequential(
             nn.Conv1d(in_channels=feature_dim, out_channels=self.d_model2, kernel_size=3, padding="same"),
@@ -291,7 +291,7 @@ class TransformerNet(nn.Module):
         # x = self.fc2(x)
 
         # 用AdaptiveAvgPool1d
-        x = self.global_pool(x.transpose(2,1))
+        x = self.global_pool(x.transpose(2, 1))
         x = x.squeeze(-1)
         x = self.fc2(x)
         return x

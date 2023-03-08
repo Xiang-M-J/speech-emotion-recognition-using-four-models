@@ -6,19 +6,19 @@ from Net import Net_Instance
 from config import beta1, beta2, gamma, step_size, random_seed, data_type, save, augment, use_noam, use_scheduler,\
      initial_lr, warmup
 
-model_type = "Transformer"  # 模型选择
-model_index = 3  # 模型编号
-epochs = 100  # 迭代次数
-lr = 6e-5  # 学习率
+model_type = "CNN"  # 模型选择
+model_index = 7  # 模型编号
+epochs = 300  # 迭代次数
+lr = 5e-4  # 学习率
 batch_size = 16  # 批次大小
 if augment:
     spilt_rate = [0.6, 0.2, 0.2]
 else:
     spilt_rate = [0.8, 0.1, 0.1]  # 训练集、验证集、测试集分割比例
-drop_rate = 0.2  # dropout
+drop_rate = 0.4  # dropout
 feature_dim = 39  # 特征维度
 num_class = 7  # 类别数
-weight_decay = 0.2  # l2正则化参数
+weight_decay = 0.3  # l2正则化参数
 smooth = True  # 是否平滑标签（True：平滑 False：不平滑）
 
 if __name__ == "__main__":
@@ -31,12 +31,13 @@ if __name__ == "__main__":
     model_name = f"{model_type}-{model_index}_drop{str(drop_rate).split('.')[-1]}_{data_type}" \
                  f"_smooth{smooth}_epoch{epochs}_l2re{str(weight_decay).split('.')[-1]}_lr{str(lr).split('.')[-1]}"
     addition = f"{model_type}, scheduler({use_scheduler}, gamma: {gamma}, step_size: {step_size}),"\
-               f" adam(beta1: {beta1}, beta2: {beta2}), random_seed: {random_seed}, " \
+               f" adam(beta1: {beta1}, beta2: {beta2}), random_seed: {random_seed}, augment: {augment} " \
                f"data_type: {data_type}, use_noam: ({use_noam}, initial_lr: {initial_lr}, warmup: {warmup})"
     option = input(f"{save} 模型名与最后保存的结果有关，请确定模型名为：{model_name}, (y(default)/n):")
     if option == '' or option == 'y' or option == 'yes' or option is None:
         Num = x.shape[0]  # 样本数
-        x = x.transpose([0, 2, 1])
+        if data_type == "mfcc":
+            x = x.transpose([0, 2, 1])
         dataset = myLoader(x, y)  # input shape of x: [样本数，特征维度，时间步]  input shape of y: [样本数，类别数]
         train_num = int(Num * spilt_rate[0])
         val_num = int(Num * spilt_rate[1])

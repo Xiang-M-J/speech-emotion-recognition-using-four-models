@@ -3,6 +3,7 @@
 #########################
 import numpy as np
 import librosa
+import torchaudio
 
 
 def noise(data):
@@ -42,7 +43,7 @@ def pitch(data, sample_rate):
     data = librosa.effects.pitch_shift(y=data.astype('float64'),
                                        sr=sample_rate, n_steps=pitch_change,
                                        bins_per_octave=bins_per_octave)
-    return data
+    return data, 'pitch'
 
 
 def dyn_change(data):
@@ -64,12 +65,18 @@ def speedNpitch(data):
     minlen = min(data.shape[0], tmp.shape[0])
     data *= 0
     data[0:minlen] = tmp[0:minlen]
-    return data
+    return data, 'speedNpitch'
 
 
 def augment_apply(file_name, method):
     data, sr = librosa.load(file_name, sr=None)
     data_, method_name = method[0](data)
-    new_name = str(file_name).split('.')[0]+f"_{method_name}"+".wav"
+    new_name = str(file_name).split('.')[0] + f"_{method_name}" + ".wav"
     new_name = new_name.replace("EmoDB", "EmoDBPro")
     return data_, sr, new_name
+
+
+def augment_torch(filename, effect):  # 暂时无法使用
+    wave, sr = torchaudio.load(filename)
+    wave_a, sr = torchaudio.sox_effects.apply_effects_tensor(wave, sr, effect)
+    return wave_a

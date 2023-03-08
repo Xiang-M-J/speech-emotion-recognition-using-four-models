@@ -4,7 +4,7 @@ import numpy as np
 import soundfile as sf
 from tqdm import tqdm
 
-from augment import noise, dyn_change, stretch, shift, augment_apply
+from augment import noise, dyn_change, stretch, shift, augment_apply, augment_torch
 from utils import get_wavs, get_masks, get_spects, get_mfccs, get_labels, load_wavs
 
 
@@ -70,5 +70,8 @@ if __name__ == "__main__":
     # mask_process(base_path="EmoDBPro", duration=4, framelength=0.05, save_name="mask_a.npy")
     # wav_data, label = load_wavs()
     # np.save("x_vec.npy", wav_data)
-    print(load_wavs())  # output [535, 64000]
+    # print(load_wavs())  # output [535, 64000]
+    effect = ['dither']
+    wav_file = 'EmoDB/anger/10a01Wa.wav'
+    data = augment_torch(wav_file, effect)
     pass
