@@ -1,0 +1,15 @@
+### Python template
+models/
+old_version/
+results/
+best_results/
+runs/
+preprocess/EmoDB/
+preprocess/EmoDBPro/
+preprocess/data
+log.txt
+.idea/
+pretrained/
+*.npy
+preprocess/__pycache__/
+__pycache__/
