@@ -75,3 +75,6 @@ Transformer, scheduler(True, gamma: 0.5, step_size: 25), adam(beta1: 0.93, beta2
 
 当模型比较大的时候，最好选择小一点的学习率
 
+
+
+前向后向因果卷积，将结果送到transformer中？

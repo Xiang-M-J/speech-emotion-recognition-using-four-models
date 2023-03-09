@@ -18,24 +18,24 @@ from utils import Metric, smooth_labels, accuracy_cal, \
 
 
 class Net_Instance:
-    def __init__(self, model_type: str, model_name: str, feature_dim=39, drop_rate=0.2, num_class=7,
-                 addition: str = ""):
+    def __init__(self, model_type: str, model_name: str, feature_dim=39, num_class=7, addition: str = ""):
         self.model_type = model_type
         self.feature_dim = feature_dim
-        self.drop_rate = drop_rate
         self.num_class = num_class
         self.model_name = model_name
         self.addition = addition
         self.best_path = f"models/{model_type}/" + model_name + "_best" + ".pt"  # 模型保存路径(max val acc)
         self.last_path = f"models/{model_type}/" + model_name + ".pt"  # 模型保存路径(final)
         self.result_path = f"results/{model_type}/"  # 结果保存路径（分为数据和图片）
+
         if save:
             self.logger = logger(self.model_name, addition=addition)
             date = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
             self.writer = SummaryWriter("runs/" + date)
 
     def train(self, train_dataset, val_dataset, batch_size: int, epochs: int, lr: float, weight_decay: float,
-              smooth: bool, is_mask=False):
+              drop_rate: float = 0.2, smooth: bool = True, is_mask=False):
+
         if save:
             self.logger.start()
             self.writer.add_text("model name", self.model_name)
@@ -68,13 +68,13 @@ class Net_Instance:
         train_num = len(train_loader.dataset)  # 当数据增强时这样能得到正确的训练集数量
         val_num = len(val_dataset)
         if self.model_type == "CNN":
-            model = CNNNet(feature_dim=self.feature_dim, drop_rate=self.drop_rate, num_class=self.num_class)
+            model = CNNNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "LSTM":
-            model = LSTMNet(feature_dim=self.feature_dim, drop_rate=self.drop_rate, num_class=self.num_class)
+            model = LSTMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "TIM":
-            model = TIMNet(feature_dim=self.feature_dim, drop_rate=self.drop_rate, num_class=self.num_class)
+            model = TIMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "Transformer":
-            model = TransformerNet(feature_dim=self.feature_dim, drop_rate=self.drop_rate, num_class=self.num_class)
+            model = TransformerNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         else:
             print(f"{self.model_type} is a wrong mode type")
             exit()
@@ -165,6 +165,7 @@ class Net_Instance:
                 best_val_accuracy = metric.val_acc[-1]
                 metric.best_val_acc[0] = best_val_accuracy
                 metric.best_val_acc[1] = metric.train_acc[-1]
+
                 if save:
                     torch.save(model, self.best_path)
                     print(f"saving model to {self.best_path}")
@@ -177,6 +178,7 @@ class Net_Instance:
             np.save(self.result_path + "data/" + self.model_name + "_train_metric.npy", metric.item())
             self.writer.add_text("beat validation accuracy", f"{metric.best_val_acc}")
             self.logger.train(train_metric=metric)
+
         return metric
 
     def test(self, test_dataset, batch_size: int, model_path: str = None):
