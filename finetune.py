@@ -15,20 +15,19 @@ from Transformer import TransformerNet
 
 config = {
     'lr': tune.loguniform(1e-5, 1e-2),
-    'batch_size': tune.choice([2, 4, 8, 16]),
     'weight_decay': tune.uniform(0, 0.5),
     'dropout': tune.uniform(0, 0.5)
 }
 
-model_type = "CNN"  # 模型选择
+model_type = "LSTM"  # 模型选择
 data_type = "mfcc"
 use_noam = False
 use_scheduler = True
 warmup = 300
 initial_lr = 0.1
-augment = True
+augment = False
 random_seed = 34
-epochs = 300  # 迭代次数
+epochs = 100  # 迭代次数
 if augment:
     spilt_rate = [0.6, 0.2, 0.2]
 else:
@@ -52,16 +51,16 @@ def train(config, checkpoint_dir=None, train_dataset=None, val_dataset=None, epo
         augment_dataset = myLoader(x_a, y_a)
         train_loader = dataloader.DataLoader(
             dataset=train_dataset + augment_dataset,
-            batch_size=int(config['batch_size'])
+            batch_size=8
         )
     else:
         train_loader = dataloader.DataLoader(
             dataset=train_dataset,
-            batch_size=int(config['batch_size']),
+            batch_size=8,
         )
     val_loader = dataloader.DataLoader(
         dataset=val_dataset,
-        batch_size=int(config['batch_size']),
+        batch_size=8,
     )
 
     train_num = len(train_loader.dataset)  # 当数据增强时这样能得到正确的训练集数量

@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # wav_data, label = load_wavs()
     # np.save("x_vec.npy", wav_data)
     # print(load_wavs())  # output [535, 64000]
-    effect = ['dither']
-    wav_file = 'EmoDB/anger/10a01Wa.wav'
-    data = augment_torch(wav_file, effect)
+    # effect = ['dither']
+    # wav_file = 'EmoDB/anger/10a01Wa.wav'
+    # data = augment_torch(wav_file, effect)
     pass

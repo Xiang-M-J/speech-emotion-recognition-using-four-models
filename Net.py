@@ -167,18 +167,27 @@ class Net_Instance:
                 metric.best_val_acc[1] = metric.train_acc[-1]
 
                 if save:
+
                     torch.save(model, self.best_path)
                     print(f"saving model to {self.best_path}")
             else:
                 print(f"val_accuracy did not improve from {best_val_accuracy}")
+        # traced = torch.jit.trace(model, (torch.rand(16, 39, 173).cuda()))
+        # traced.save("test.pt")
         if save:
             torch.save(model, self.last_path)
             print(f"save model(last): {self.last_path}")
             plot(metric.item(), self.model_name, self.result_path)
             np.save(self.result_path + "data/" + self.model_name + "_train_metric.npy", metric.item())
             self.writer.add_text("beat validation accuracy", f"{metric.best_val_acc}")
+            dummy_input = torch.rand(16, 39, 173)
+            if torch.cuda.is_available():
+                dummy_input = dummy_input.cuda()
+            # if self.model_type == "Transformer":
+            #     self.writer.add_graph(model.module, dummy_input)
+            # else:
+            self.writer.add_graph(model, dummy_input)
             self.logger.train(train_metric=metric)
-
         return metric
 
     def test(self, test_dataset, batch_size: int, model_path: str = None):

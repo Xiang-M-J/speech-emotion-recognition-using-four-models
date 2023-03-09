@@ -1,5 +1,5 @@
 ## 预处理
-22050Hz采样率, 25ms, 4s
+22050Hz采样率, 50ms, 4s
 
 ## CNN
 ****
@@ -8,7 +8,7 @@
 | 0.2  |   mfcc   |   true   |         100          |    0.1     |  5e-4  |   84.91,  100   |   77.78    |
 | 0.4  |   mfcc   |   true   | 400(300时已经收敛了) |    0.3     |  1e-4  |   86.91,98.32   |   82.24    |
 | 0.4  |   mfcc   |   true   |         300          |    0.3     |  1e-4  |  85.98, 99.44   |   85.98    |
-|      |          |          |                      |            |        |                 |            |
+| 0.4  |   mfcc   |   true   |         100          |    0.3     |  5e-4  |  88.68, 99.77   |   85.18    |
 |      |          |          |                      |            |        |                 |            |
 |      |          |          |                      |            |        |                 |            |
 
@@ -17,6 +17,8 @@ CNN, scheduler(gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), rando
 CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, augment: True data_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500) CNN结构中仅对全连接层设置了特殊的dropout参数，两个卷积层的dropout都为0.2
 
 CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, augment: Truedata_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500) 两个卷积层的dropout设置为0.1
+
+CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, augment: False data_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500) 两个卷积层的dropout设置为0.1
 
 过多的卷积层如3层好像不利于网络泛化
 
@@ -34,29 +36,46 @@ CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98)
 
 ****
 
-| 丢弃 | 数据类型 | 标签平滑 | 迭代次数 | 正则化参数 | 学习率 | 验证/训练准确率 | 测试准确率 |
-| :--: | :------: | :------: | :------: | :--------: | :----: | :-------------: | :--------: |
-| 0.3  |   mfcc   |   true   |   100    |    0.2     |  5e-4  |  86.79, 97.43   |   62.96    |
-| 0.3  |   mfcc   |   true   |   100    |    0.3     |  5e-4  |  88.70, 99.53   |   72.22    |
-|      |          |          |          |            |        |                 |            |
-|      |          |          |          |            |        |                 |            |
-|      |          |          |          |            |        |                 |            |
+| 丢弃 | 序号 | 数据类型 | 标签平滑 | 迭代次数 | 正则化参数 | 学习率 | 验证/训练准确率 | 测试准确率 | 日期                |
+| :--: | ---- | :------: | :------: | :------: | :--------: | :----: | :-------------: | :--------: | ------------------- |
+| 0.3  | 1    |   mfcc   |   true   |   100    |    0.2     |  5e-4  |  86.79, 97.43   |   62.96    |                     |
+| 0.3  | 1    |   mfcc   |   true   |   100    |    0.3     |  5e-4  |  88.70, 99.53   |   72.22    |                     |
+| 0.3  | 2    |   mfcc   |   true   |   100    |    0.3     |  5e-4  |   88.68, 100    |   83.33    |                     |
+| 0.4  | 2    |   mfcc   |   true   |   100    |    0.3     |  5e-4  |    90.57,100    |   79.63    | 2023-03-09 15:40:31 |
+| 0.5  | 2    |   mfcc   |   true   |   100    |    0.3     |  5e-4  |    94.34,100    |   77.78    | 2023-03-09 15:42:19 |
+| 0.5  | 2    |   mfcc   |   true   |   100    |    0.2     |  5e-4  |    88.68,100    |   85.19    | 2023-03-09 16:08:46 |
+| 0.5  | 2    |   mfcc   |   true   |   100    |    0.4     |  5e-4  |    92.45,100    |   79.63    | 2023-03-09 16:11:49 |
+| 0.5  | 2    |   mfcc   |   true   |   100    |    0.5     |  5e-4  |   90.57, 100    |   88.89    | 2023-03-09 16:13:14 |
+| 0.5  | 2    |   mfcc   |   true   |   100    |    0.5     |  5e-4  |  88.68, 99.53   |   79.63    | 2023-03-09 16:19:13 |
+| 0.5  | 2    |   mfcc   |   true   |   100    |    0,5     |  5e-4  |  94.34, 100.0   |   81.48    | 2023_03_09 16:24:37 |
 
-LSTM, scheduler(gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34
+1 ：LSTM, scheduler(gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34
+
+2：LSTM, scheduler(True, gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, augment: False data_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500) 不取LSTM的最后一步，直接用全连接层将时间步转成1，之后加入dropout，LSTM只用一层。
+
+如果只取最后一步的输出模型的泛化能力不会太好。
+
+增加dropout会让验证集的准确率上升，但是会影响到测试准确率
+
+过小的L2正则化参数不利于模型的泛化，过大也不利于模型泛化（结果不够稳定），不过可能对测试集上的性能有所帮助
 
 ## TIM
 
-| 丢弃  | 数据类型 | 标签平滑 | 迭代次数 | 正则化参数 | 学习率  | 验证/训练准确率     | 测试准确率 |
-|-----|------|------|------|-------|:----:|--------------|-------|
-| 0.1 | mfcc | true | 100  | 0     | 3e-3 | 92.45,98.36  | 70.37 |
-| 0.1 | mfcc | true | 100  | 0.1   | 3e-3 | 90.57, 92.52 | 74.07 |
-|     |      |      |      |       |      |              |       |
-|     |      |      |      |       |      |              |       |
-|     |      |      |      |       |      |              |       |
+| 丢弃 | 编号 | 数据类型 | 标签平滑 | 迭代次数 | 正则化参数 | 学习率 | 验证/训练准确率 | 测试准确率 | 日期                |
+| ---- | ---- | -------- | -------- | -------- | ---------- | :----: | --------------- | ---------- | ------------------- |
+| 0.1  | 1    | mfcc     | true     | 100      | 0          |  3e-3  | 92.45,98.36     | 70.37      |                     |
+| 0.1  | 1    | mfcc     | true     | 100      | 0.1        |  3e-3  | 90.57, 92.52    | 74.07      |                     |
+| 0.25 | 2    | mfcc     | true     | 100      | 0          |  5e-3  | 94.34, 100      | 88.89      | 2023-03-09 20:33:51 |
+|      |      |          |          |          |            |        |                 |            |                     |
+|      |      |          |          |          |            |        |                 |            |                     |
 
-TIM, scheduler(gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34
+1: TIM, scheduler(gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34
 
-加入正则会影响训练准确率，还是不加比较好
+2: TIM, scheduler(True, gamma: 0.4, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, augment: False data_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500) 不在temporal-aware-block中加入SpatialDropout，将filters增加至128，在WeightLayer后加入dropout层
+
+加入正则会影响训练准确率，还是不加比较好，
+
+模型比较复杂，需要较大的学习率来驱动
 
 ## Transformer
 
@@ -78,3 +97,7 @@ Transformer, scheduler(True, gamma: 0.5, step_size: 25), adam(beta1: 0.93, beta2
 
 
 前向后向因果卷积，将结果送到transformer中？
+
+**召回率：**样本中的正例有多少被预测正确了
+
+**精确率：**预测为正的样本中有多少是真正的正样本

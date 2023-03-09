@@ -2,7 +2,6 @@ from itertools import repeat
 
 import torch
 import torch.nn as nn
-from torch.nn.utils import weight_norm
 
 
 class Chomp1d(nn.Module):
@@ -60,7 +59,7 @@ class Temporal_Aware_Block(nn.Module):
         chomp1 = Chomp1d(padding)  # 截断输出
         bn1 = nn.BatchNorm1d(filters)
         act1 = nn.ReLU()
-        dropout1 = SpatialDropout(dropout)
+        # dropout1 = SpatialDropout(dropout)
 
         conv2 = (nn.Conv1d(in_channels=filters, out_channels=filters,
                            kernel_size=kernel_size, padding=padding, dilation=dilation))
@@ -69,8 +68,11 @@ class Temporal_Aware_Block(nn.Module):
         act2 = nn.ReLU()
         dropout2 = SpatialDropout(dropout)
 
+        # self.casual = nn.Sequential(
+        #     conv1, chomp1, bn1, act1, dropout1, conv2, chomp2, bn2, act2, dropout2
+        # ).cuda()
         self.casual = nn.Sequential(
-            conv1, chomp1, bn1, act1, dropout1, conv2, chomp2, bn2, act2, dropout2
+            conv1, chomp1, bn1, act1, conv2, chomp2, bn2, act2,
         ).cuda()
         self.resample = nn.Conv1d(in_channels=feature_dim, out_channels=filters, kernel_size=1, padding="same")
         self.act3 = nn.Sigmoid()
@@ -90,7 +92,7 @@ class TIM_Net(nn.Module):  # Conv1d Input:[batch_size, feature_dim, seq_len]
         super(TIM_Net, self).__init__()
         if not isinstance(filters, int):
             raise Exception()
-        self.dilation_layer = []
+        self.dilation_layer = nn.ModuleList([])     # ModuleList存放Module，方便后面add_graph
         # padding = 0  # 下面的因果卷积的dilation=1 kernel_size=1
         self.conv = (nn.Conv1d(in_channels=feature_dim, out_channels=filters, kernel_size=1, dilation=1,
                                padding=0))
@@ -98,12 +100,15 @@ class TIM_Net(nn.Module):  # Conv1d Input:[batch_size, feature_dim, seq_len]
         # self.causalConv = nn.Sequential(conv)
         if dilation is None:
             dilation = 8
+        # self.dilation_layer.append(
+        #     Temporal_Aware_Block(feature_dim=feature_dim, filters=filters, kernel_size=kernel_size, dilation=1,
+        #                              dropout=dropout))
         for i in [2 ** i for i in range(dilation)]:
             self.dilation_layer.append(
-                Temporal_Aware_Block(feature_dim=feature_dim, filters=filters, kernel_size=kernel_size, dilation=i,
+                Temporal_Aware_Block(feature_dim=filters, filters=filters, kernel_size=kernel_size, dilation=i,
                                      dropout=dropout)
             )
-
+        self.drop = nn.Dropout(p=dropout)
         self.globalpool = nn.AdaptiveAvgPool1d(1)
 
     def forward(self, x):
@@ -120,10 +125,12 @@ class TIM_Net(nn.Module):  # Conv1d Input:[batch_size, feature_dim, seq_len]
             skip_out_b = layer(skip_out_b)
             skip_temp = torch.add(skip_out_f, skip_out_b)
             skip_temp = self.globalpool(skip_temp)  # output shape: [batch_size, feature_dim, 1]
+
             if skip_stack is None:
                 skip_stack = skip_temp
             else:
                 skip_stack = torch.cat((skip_stack, skip_temp), dim=-1)
+        # skip_stack = self.drop(skip_stack)
         return skip_stack  # output shape: [batch_size, feature_dim, dilation]
 
 
@@ -138,7 +145,7 @@ class WeightLayer(nn.Module):
 
 
 class TIMNet(nn.Module):  # input shape: [batch_size, feature_dim, seq_len]
-    def __init__(self, feature_dim=39, drop_rate=0.1, num_class=7, filters=39, dilation=8, kernel_size=2):
+    def __init__(self, feature_dim=39, drop_rate=0.1, num_class=7, filters=128, dilation=8, kernel_size=2):
         super(TIMNet, self).__init__()
         self.multi_decision_layer = TIM_Net(
             feature_dim=feature_dim,
@@ -148,11 +155,15 @@ class TIMNet(nn.Module):  # input shape: [batch_size, feature_dim, seq_len]
             dropout=drop_rate
         )
         self.weight_layer = WeightLayer(dilation=dilation)
-        self.fc = nn.Linear(in_features=feature_dim, out_features=num_class)
+        self.drop = nn.Dropout(p=drop_rate)
+        # self.fc1 = nn.Linear(in_features=filters, out_features=128)
+        self.fc2 = nn.Linear(in_features=filters, out_features=num_class)
 
     def forward(self, x):
         x = self.multi_decision_layer(x)
         x = self.weight_layer(x)
         x = x.squeeze(-1)
-        x = self.fc(x)
+        # x = self.fc1(x)
+        x = self.drop(x)
+        x = self.fc2(x)
         return x
