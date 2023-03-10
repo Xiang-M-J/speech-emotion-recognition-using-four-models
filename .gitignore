@@ -6,6 +6,7 @@ best_results/
 runs/
 preprocess/EmoDB/
 preprocess/EmoDBPro/
+preprocess/EmoDBPro - 副本/
 preprocess/data
 log.txt
 .idea/

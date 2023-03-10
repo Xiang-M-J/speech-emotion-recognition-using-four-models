@@ -48,7 +48,7 @@ def get_mfccs(wav_files: list, duration=4, framelength=0.05):
     return mfccs
 
 
-def get_melspectrum(filename, duration=4, framelength=0.05):
+def get_melspectrum(filename, duration=4, framelength=0.05, n_mels=40):
     if default:
         data, sr = librosa.load(filename)
     else:
@@ -60,15 +60,15 @@ def get_melspectrum(filename, duration=4, framelength=0.05):
         padding_len = sr * duration - len(data)
         data = np.hstack([data, np.zeros(padding_len)])
     framesize = int(framelength * sr)
-    mel_spect = librosa.feature.melspectrogram(y=data, sr=sr, n_fft=framesize, n_mels=40)  # 40维
+    mel_spect = librosa.feature.melspectrogram(y=data, sr=sr, n_fft=framesize, n_mels=n_mels)  # n_mels 维
     mel_spect = librosa.power_to_db(mel_spect, ref=np.max)
     return mel_spect
 
 
 # 获取mel声谱图（fbank）
-def get_spects(wav_files: list, duration=4, framelength=0.05):
+def get_spects(wav_files: list, duration=4, framelength=0.05, n_mels=40):
     print("mel spectrum")
-    mel_spects = get_melspectrum(wav_files[0], duration, framelength)
+    mel_spects = get_melspectrum(wav_files[0], duration, framelength, n_mels=n_mels)
     size = mel_spects.shape
     for it in tqdm(wav_files[1:]):
         mel_spect = get_melspectrum(it, duration, framelength)

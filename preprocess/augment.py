@@ -69,11 +69,11 @@ def speedNpitch(data):
     return data, 'speedNpitch'
 
 
-def augment_apply(file_name, method):
+def augment_apply(file_name, method, new_dir="EmoDBPro"):
     data, sr = librosa.load(file_name, sr=None)
     data_, method_name = method[0](data)
     new_name = str(file_name).split('.')[0] + f"_{method_name}" + ".wav"
-    new_name = new_name.replace("EmoDB", "EmoDBPro")
+    new_name = new_name.replace("EmoDB", new_dir)
     return data_, sr, new_name
 
 
