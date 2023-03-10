@@ -4,6 +4,7 @@
 import numpy as np
 import librosa
 import torchaudio
+import random
 
 
 def noise(data):
@@ -50,7 +51,7 @@ def dyn_change(data):
     """
     Random Value Change.
     """
-    dyn_change = np.random.uniform(low=1.5, high=3)  # default low = 1.5, high = 3
+    dyn_change = np.random.uniform(low=1.5, high=2)  # default low = 1.5, high = 3
     return data * dyn_change, "dyn_change"
 
 

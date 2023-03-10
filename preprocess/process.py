@@ -40,7 +40,7 @@ def audio_augment():
         'anger': [0, 126], 'boredom': [127, 207], 'disgust': [208, 253], 'fear': [254, 322], 'happy': [323, 393],
         'neutral': [394, 472], 'sad': [473, 534]
     }
-    methods = [noise, dyn_change, stretch, shift]
+    methods = [noise, dyn_change]
     wav_files = get_wavs("EmoDB")
     files = [wav_files[files_index['boredom'][0]:files_index['boredom'][1] + 1],
              wav_files[files_index['disgust'][0]:files_index['disgust'][1] + 1],
