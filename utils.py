@@ -151,7 +151,6 @@ class myLoader(dataset.Dataset):
         super(myLoader, self).__init__()
         self.train = train  # 训练和测试时对数据的处理可能不同
         self.transforms = transforms.Compose([
-            # transforms.Resize
             transforms.ToTensor(),
             # transforms.Normalize(mean=[0.5], std=[0.5])
         ])

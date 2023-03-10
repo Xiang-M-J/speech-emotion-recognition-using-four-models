@@ -1,6 +1,6 @@
 beta1 = 0.93
 beta2 = 0.98
-gamma = 0.4
+gamma = 0.5
 step_size = 50
 random_seed = 34
 data_type = "mfcc"  # ["mfcc", "mel"]
@@ -8,5 +8,5 @@ save = True  # 是否保存结果与模型
 augment = False  # 是否使用增强后的数据
 use_scheduler = True
 use_noam = False  # 用于Transformer
-warmup = 500  # noam参数
-initial_lr = 0.1  # 初始学习率(noam)
+warmup = 300  # noam参数
+initial_lr = 0.08  # 初始学习率(noam)

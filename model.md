@@ -83,16 +83,24 @@ CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98)
 | :--: | :------: | :--: | :------: | :------: | :--------: | :------------: | :-------------: | :--------: | :-----------------: |
 | 0.2  |   mfcc   |  1   |   true   |   100    |    0.2     | noam(0.1, 500) |   83.02, 100    |   81.48    | 2023-03-08 10:07:51 |
 | 0.2  |   mfcc   |  2   |   true   |   100    |    0.2     |      6e-5      |    84.91,100    |   85.19    | 2023-03-08 10:31:44 |
+| 0.1  |   mfcc   |  4   |   true   |   100    |     0      | noam(0.1, 300) |  [88.68, 100]   |   75.93    | 2023-03-10 13:10:34 |
+| 0.2  |   mfcc   |  4   |   true   |   100    |    0.1     |      6e-5      |  [92.45,96.03]  |   87.04    | 2023-03-10 13:42:52 |
+| 0.1  |   mfcc   |  4   |   true   |   100    |    0.1     |      6e-5      | [86.79, 99.53]  |   87.04    | 2023-03-10 13:24:51 |
+| 0.1  |   mfcc   |  4   |   true   |   100    |    0.1     |      6e-5      | [90.57, 99.53]  |   79.63    | 2023-03-10 15:28:33 |
 
-Transformer, scheduler(False, gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, data_type: mfcc, use_noam: (True, initial_lr: 0.1, warmup: 500)
+1: Transformer, scheduler(False, gamma: 0.5, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, data_type: mfcc, use_noam: (True, initial_lr: 0.1, warmup: 500)
 
-Transformer, scheduler(True, gamma: 0.5, step_size: 25), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, data_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500)
+2: Transformer, scheduler(True, gamma: 0.5, step_size: 25), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, data_type: mfcc, use_noam: (False, initial_lr: 0.1, warmup: 500)
+
+4: Transformer, scheduler(False, gamma: 0.8, step_size: 50), adam(beta1: 0.93, beta2: 0.98), random_seed: 34, augment: False data_type: mfcc, use_noam: (True, initial_lr: 0.1, warmup: 300) 两层卷积卷到256维，再输入transformer中,transformer: n_head=8, n_layers=4, dim_feedforward=1024，卷积层和transformer的dropout设为0，不加mask。
 
 1/2 ：一层卷积，d_model=512, dim_feedforward, n_layers = 3, n_head=8, 用AdaptiveAvgPool1d
 
-两层卷积的效果好像没有一层卷积的效果好
-
 当模型比较大的时候，最好选择小一点的学习率
+
+不加mask，相当于加噪声了，模型的泛化能力可能更好一点
+
+
 
 
 

@@ -75,6 +75,7 @@ class Net_Instance:
             model = TIMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "Transformer":
             model = TransformerNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
+            # model = TransformerNetV2(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         else:
             print(f"{self.model_type} is a wrong mode type")
             exit()
@@ -167,7 +168,6 @@ class Net_Instance:
                 metric.best_val_acc[1] = metric.train_acc[-1]
 
                 if save:
-
                     torch.save(model, self.best_path)
                     print(f"saving model to {self.best_path}")
             else:
@@ -181,12 +181,16 @@ class Net_Instance:
             np.save(self.result_path + "data/" + self.model_name + "_train_metric.npy", metric.item())
             self.writer.add_text("beat validation accuracy", f"{metric.best_val_acc}")
             dummy_input = torch.rand(16, 39, 173)
+
             if torch.cuda.is_available():
                 dummy_input = dummy_input.cuda()
-            # if self.model_type == "Transformer":
-            #     self.writer.add_graph(model.module, dummy_input)
-            # else:
-            self.writer.add_graph(model, dummy_input)
+            if self.model_type != "Transformer":
+                self.writer.add_graph(model, dummy_input)
+            else:
+                mask = torch.rand(16, 173)
+                self.writer.add_graph(model, [dummy_input, mask])
+                # else:
+                #     self.writer.add_graph(model, [dummy_input])
             self.logger.train(train_metric=metric)
         return metric
 
