@@ -102,8 +102,6 @@ CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98)
 
 
 
-
-
 前向后向因果卷积，将结果送到transformer中？
 
 **召回率：**样本中的正例有多少被预测正确了

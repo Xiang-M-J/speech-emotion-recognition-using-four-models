@@ -6,7 +6,7 @@ class LSTMNet(nn.Module):
         super(LSTMNet, self).__init__()
         self.lstm = nn.LSTM(input_size=feature_dim, hidden_size=256, batch_first=True, bidirectional=True)
         # output [batch_size, time_step, feature_dim]
-        self.pool = nn.MaxPool1d(2)  # input [batch_size,feature_dim,time_step]
+        # self.pool = nn.MaxPool1d(2)  # input [batch_size,feature_dim,time_step]
         self.batch_norm = nn.BatchNorm1d(
             2 * 256)  # input [batch_size,feature_dim,time_step] or [batch_size,feature_dim]
 

@@ -1,6 +1,6 @@
 beta1 = 0.93
 beta2 = 0.98
-gamma = 0.5
+gamma = 0.3
 step_size = 50
 random_seed = 34
 data_type = "mfcc"  # ["mfcc", "mel"]

@@ -11,7 +11,7 @@ from torch.utils.data import dataloader
 from CNN import CNNNet
 from LSTM import LSTMNet
 from TIM import TIMNet
-from Transformer import TransformerNet
+from Transformer import TransformerNet, TransformerNetV2
 from config import beta1, beta2, step_size, gamma, save, augment, data_type, use_noam, use_scheduler, warmup, initial_lr
 from utils import Metric, smooth_labels, accuracy_cal, \
     CLASS_LABELS, plot_matrix, plot, logger, l2_regularization, myLoader, noam
@@ -74,8 +74,7 @@ class Net_Instance:
         elif self.model_type == "TIM":
             model = TIMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "Transformer":
-            model = TransformerNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
-            # model = TransformerNetV2(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
+            model = TransformerNetV2(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         else:
             print(f"{self.model_type} is a wrong mode type")
             exit()
@@ -166,14 +165,16 @@ class Net_Instance:
                 best_val_accuracy = metric.val_acc[-1]
                 metric.best_val_acc[0] = best_val_accuracy
                 metric.best_val_acc[1] = metric.train_acc[-1]
-
                 if save:
                     torch.save(model, self.best_path)
                     print(f"saving model to {self.best_path}")
+            elif metric.val_acc[-1] == best_val_accuracy:
+                if metric.train_acc[-1] > metric.best_val_acc[1]:
+                    metric.best_val_acc[1] = metric.train_acc[-1]
+                    if save:
+                        torch.save(model, self.best_path)
             else:
                 print(f"val_accuracy did not improve from {best_val_accuracy}")
-        # traced = torch.jit.trace(model, (torch.rand(16, 39, 173).cuda()))
-        # traced.save("test.pt")
         if save:
             torch.save(model, self.last_path)
             print(f"save model(last): {self.last_path}")
