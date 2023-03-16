@@ -13,6 +13,7 @@ from LSTM import LSTMNet
 from TIM import TIMNet
 from GRU import GRUNet
 from MLP import MLPNet
+from RNN import RNNNet
 from Transformer import TransformerNet, TransformerNetV2
 from config import beta1, beta2, step_size, gamma, save, augment, data_type, use_noam, use_scheduler, warmup, initial_lr
 from utils import Metric, smooth_labels, accuracy_cal, \
@@ -75,6 +76,8 @@ class Net_Instance:
             model = LSTMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "GRU":
             model = GRUNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
+        elif self.model_type == "RNN":
+            model = RNNNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "MLP":
             model = MLPNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "TIM":
@@ -82,8 +85,7 @@ class Net_Instance:
         elif self.model_type == "Transformer":
             model = TransformerNetV2(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         else:
-            print(f"{self.model_type} is a wrong mode type")
-            exit()
+            raise ValueError(f"{self.model_type} is wrong mode type")
         optimizer = torch.optim.Adam(params=model.parameters(), lr=lr, betas=(beta1, beta2))
         loss_fn = torch.nn.CrossEntropyLoss()
         scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=step_size, gamma=gamma, last_epoch=-1)
