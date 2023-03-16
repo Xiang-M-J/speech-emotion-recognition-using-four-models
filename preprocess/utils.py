@@ -71,7 +71,7 @@ def get_spects(wav_files: list, duration=4, framelength=0.05, n_mels=40):
     mel_spects = get_melspectrum(wav_files[0], duration, framelength, n_mels=n_mels)
     size = mel_spects.shape
     for it in tqdm(wav_files[1:]):
-        mel_spect = get_melspectrum(it, duration, framelength)
+        mel_spect = get_melspectrum(it, duration, framelength, n_mels=n_mels)
         mel_spects = np.vstack((mel_spects, mel_spect))
     mel_spects = mel_spects.reshape(-1, size[0], size[1])
     return mel_spects
@@ -146,7 +146,7 @@ def get_labels(wav_files):
     return y
 
 
-def load_wavs(base_path: str = "./EmoDB", duration:float = 4):
+def load_wavs(base_path: str = "./EmoDB", duration: float = 4):
     wav_files = get_wavs(base_path=base_path)
     # labels = get_labels(wav_files=wav_files)
     wav_data = None

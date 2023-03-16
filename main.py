@@ -8,17 +8,17 @@ from config import beta1, beta2, gamma, step_size, random_seed, data_type, save,
 
 model_type = "LSTM"  # 模型选择
 model_index = 3  # 模型编号
-epochs = 5  # 迭代次数
-lr = 1e-4  # 学习率
+epochs = 100  # 迭代次数
+lr = 5e-4  # 学习率
 batch_size = 32  # 批次大小
 if augment:
     spilt_rate = [0.6, 0.2, 0.2]
 else:
     spilt_rate = [0.8, 0.1, 0.1]  # 训练集、验证集、测试集分割比例
-drop_rate = 0.3  # dropout
+drop_rate = 0.5  # dropout
 feature_dim = 39  # 特征维度
 num_class = 7  # 类别数
-weight_decay = 0.1  # l2正则化参数
+weight_decay = 0.5  # l2正则化参数
 smooth = True  # 是否平滑标签（True：平滑 False：不平滑）
 
 if __name__ == "__main__":

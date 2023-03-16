@@ -69,9 +69,9 @@ def audio_augment(new_dir="EmoDBPro"):
 
 if __name__ == "__main__":
     # mel_process(base_path="EmoDB", duration=4, framelength=0.05)
-    mfcc_process(base_path="EmoDBPro", duration=4, framelength=0.05, save_name=["x_mfcc_a.npy", "y_a.npy"])
-    mel_process(base_path="EmoDBPro", duration=4, framelength=0.05, save_name="x_mel_a.npy")
-    mask_process(base_path="EmoDBPro", duration=4, framelength=0.05, save_name="mask_a.npy")
+    # mfcc_process(base_path="EmoDBPro", duration=4, framelength=0.05, save_name=["x_mfcc_a.npy", "y_a.npy"])
+    mel_process(base_path="EmoDB", duration=4, framelength=0.05, save_name="x_mel.npy", n_mels=40)
+    # mask_process(base_path="EmoDBPro", duration=4, framelength=0.05, save_name="mask_a.npy")
     # wav_data, label = load_wavs()
     # np.save("x_vec.npy", wav_data)
     # print(load_wavs())  # output [535, 64000]

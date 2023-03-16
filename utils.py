@@ -329,3 +329,7 @@ def smooth_labels(labels, factor=0.1):
 def noam(d_model, step, warmup):
     fact = min(step ** (-0.5), step * warmup ** (-1.5))
     return fact * (d_model ** (-0.5))
+
+
+def cleanup():
+    print("如果想要删除一个目录下所有的png格式图片，可以在控制台输入:  del /a /f /s /q  \"*.png\"")

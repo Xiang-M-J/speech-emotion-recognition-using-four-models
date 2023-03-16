@@ -11,6 +11,7 @@ from torch.utils.data import dataloader
 from CNN import CNNNet
 from LSTM import LSTMNet
 from TIM import TIMNet
+from GRU import GRUNet
 from Transformer import TransformerNet, TransformerNetV2
 from config import beta1, beta2, step_size, gamma, save, augment, data_type, use_noam, use_scheduler, warmup, initial_lr
 from utils import Metric, smooth_labels, accuracy_cal, \
@@ -71,6 +72,8 @@ class Net_Instance:
             model = CNNNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "LSTM":
             model = LSTMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
+        elif self.model_type == "GRU":
+            model = GRUNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "TIM":
             model = TIMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "Transformer":
@@ -173,6 +176,7 @@ class Net_Instance:
                     metric.best_val_acc[1] = metric.train_acc[-1]
                     if save:
                         torch.save(model, self.best_path)
+                        print(f"update train accuracy")
             else:
                 print(f"val_accuracy did not improve from {best_val_accuracy}")
         if save:
