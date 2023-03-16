@@ -12,6 +12,7 @@ from CNN import CNNNet
 from LSTM import LSTMNet
 from TIM import TIMNet
 from GRU import GRUNet
+from MLP import MLPNet
 from Transformer import TransformerNet, TransformerNetV2
 from config import beta1, beta2, step_size, gamma, save, augment, data_type, use_noam, use_scheduler, warmup, initial_lr
 from utils import Metric, smooth_labels, accuracy_cal, \
@@ -74,6 +75,8 @@ class Net_Instance:
             model = LSTMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "GRU":
             model = GRUNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
+        elif self.model_type == "MLP":
+            model = MLPNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "TIM":
             model = TIMNet(feature_dim=self.feature_dim, drop_rate=drop_rate, num_class=self.num_class)
         elif self.model_type == "Transformer":

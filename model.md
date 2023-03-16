@@ -75,7 +75,7 @@ CNN, scheduler(True, gamma: 0.5, step_size: 100), adam(beta1: 0.93, beta2: 0.98)
 
 加入正则会影响训练准确率，还是不加比较好，
 
-模型比较复杂，需要较大的学习率来驱动
+需要较大的学习率来驱动
 
 ## Transformer
 
